@@ -1,0 +1,24 @@
+@media print {
+  :root, :root[data-theme='dark'] {
+    color-scheme: light;
+    --papel: #fff; --superficie: #fff; --superficie-2: #f2f2f2; --linha: #bbb;
+    --tinta: #000; --tinta-2: #222; --tinta-3: #444;
+    --acento: #000; --acento-tinta: #fff; --acento-suave: #eee; --barra: #444;
+    --alerta: #000; --alerta-fundo: #fff;
+    --sombra: none;
+  }
+  @page { margin: 18mm 16mm; }
+  body { font-size: 10.5pt; line-height: 1.45; background: #fff; }
+  .app { display: block; min-height: 0; }
+  .topo, .lateral, .pular, .status, .detalhe, .sem-impressao, .rodape { display: none !important; }
+  .conteudo { padding: 0; max-width: none; }
+  .cartao { border: 1px solid #bbb; padding: 10px 12px; }
+  .secao-relatorio { break-inside: auto; margin-top: 16pt; }
+  .secao-relatorio > h3 { break-after: avoid; border-bottom: 1px solid #000; padding-bottom: 2pt; }
+  .interp, .barra-linha, tr, .quadro, .tempo { break-inside: avoid; }
+  .tempo-idade { display: block !important; }
+  .barra-marca, .tempo-seg, .quadro-celula.cheia, .letra.vogal { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .tempo-seg.vigente { background: #eee; color: #000; font-weight: 700; }
+  details > summary { display: none; }
+  a { color: #000; text-decoration: none; }
+}

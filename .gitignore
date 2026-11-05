@@ -1,0 +1,8 @@
+node_modules/
+dist/
+# O index.html da raiz e a transcrição acompanham a publicação solicitada.
+test-results/
+playwright-report/
+.env
+.env.*
+*.log
