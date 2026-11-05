@@ -18,7 +18,7 @@ const p = (chave, nome, numeros, interpretacao, observacaoEditorial = null) =>
  * pelo exemplo de Anne. Os resumos abaixo não vão além disso.
  */
 export const PLANOS = Object.freeze({
-  materiais: p('materiais', 'Materiais', [4, 5], 'Grupo dos números 4 e 5 (p. 47). O 5 é a exceção entre os números altos: está sempre mudando, e sua falta de equilíbrio indica muitos caminhos sem domínio de nenhum (p. 48).', 'A p. 50 fala em "um 6 no plano material", embora o 6 pertença ao grupo emocional da p. 47.'),
+  materiais: p('materiais', 'Materiais', [4, 5], 'Grupo dos números 4 e 5 (p. 47). O 5 é a exceção entre os números altos: está sempre mudando, e sua falta de equilíbrio indica muitos caminhos sem domínio de nenhum (p. 48).'),
   emocionais: p('emocionais', 'Emocionais', [2, 3, 6], 'Grupo dos números 2, 3 e 6 (p. 47). No exemplo de Anne, o 6 aparece ligado a responsabilidade, voz e capacidade de atrair amor e amizade (p. 50–51).'),
   mentais: p('mentais', 'Mentais', [1, 8], 'Grupo dos números 1 e 8 (p. 47). O 8 é descrito como número mental e extrovertido, associado à conquista de sucesso material (p. 50).'),
   intuitivos: p('intuitivos', 'Intuitivos', [7, 9], 'Grupo dos números 7 e 9 (p. 47). A autora só desenvolve aqui o 7: encontrá-lo ou notar sua falta nos planos indica emoções reprimidas (p. 49).'),
@@ -50,7 +50,5 @@ export const NOTAS_PLANOS = Object.freeze({
     numero: 7,
     interpretacao:
       'Encontrar um 7 nos planos, ou notar sua falta, indica alguém que reprime as emoções por medo de ser repelido; isso prejudica nervos, saúde e relacionamentos. O conselho é não levar os próprios sentimentos demasiado a sério.',
-    observacaoEditorial:
-      'A frase não define se "um 7" significa exatamente um. O aplicativo mostra esta nota quando há zero ou um 7, e indica a ambiguidade.',
   }),
 });

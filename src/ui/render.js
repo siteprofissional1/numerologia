@@ -87,7 +87,6 @@ export function cabecalhoMapa(ctx, acoes) {
       cartaoNumero(m.realidade, ctx),
       cartaoNumero(m.dia, ctx, { nota: `Número associado: ${exibicao(m.dia.reducao)}` }),
       cartaoNumero(elemento, ctx, { nota: m.dia.elemento.titulo })),
-    h('p', { class: 'ajuda sem-impressao' }, 'Toque em um número para ver o texto do livro e o cálculo.'),
     m.analise.transformacoes.length > 0 && aviso('Convenção técnica do aplicativo:',
       `${m.analise.transformacoes.map((t) => `${t.de}→${t.para}`).join(', ')}. A tabela do livro traz apenas A–Z e não trata de acentos.`),
     m.analise.yEhVogal && aviso('Regra do Y:', 'como o nome não tem A, E, I, O ou U, o Y foi considerado vogal.'),

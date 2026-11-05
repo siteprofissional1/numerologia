@@ -6,7 +6,6 @@ import { EXPLICACOES_FUTURO, NOTA_CICLOS_DESAFIOS, PINACULOS_SIGNIFICADOS } from
 import { NOTA_REALIDADE } from '../data/relationships.js';
 import { DEFINICOES_POSICOES } from '../data/position-definitions.js';
 import { NOTAS_PLANOS, PLANOS } from '../data/expression-planes.js';
-import { OBRA } from '../config/rules.js';
 import {
   blocoTexto, definicoes, etapas, listaNumeros, secao, tabela,
 } from './components.js';
@@ -35,7 +34,6 @@ export function secaoRelatorio(ctx) {
       ['Nome recebido ao nascer', m.pessoa.nome],
       ['Data de nascimento', m.pessoa.data],
       ['Ano de consulta', String(m.anoConsulta)],
-      ['Referência', `${OBRA.titulo}, ${OBRA.editora}`],
       m.analise.transformacoes.length > 0 && ['Convenção de acentos', m.analise.transformacoes.map((t) => `${t.de}→${t.para}`).join(', ')],
     ])),
     parte('Conversão do nome em números',
@@ -91,7 +89,6 @@ export function secaoRelatorio(ctx) {
       barraDoTempo(m.desafios.itens, m),
       faseAtual(m, 'desafio', 'desafio'),
       texto(NOTA_CICLOS_DESAFIOS),
-      h('p', { class: 'nota-editorial' }, 'Nota do aplicativo, fora do livro: o livro não tem lista própria de desafios e ciclos. Como diz que o significado é semelhante, abaixo está o texto dos pináculos para o mesmo número. No desafio, leia como o que a pessoa precisa desenvolver.'),
       m.desafios.itens.map((d, i, todos) => {
         const titulo = `${d.ordem}º desafio: ${d.exibicao}, ${d.faixaTexto}. ${d.conta}`;
         return repetido(d, i, todos, 'desafio', titulo) ?? textoDesafio(d, ctx, titulo);
@@ -121,7 +118,6 @@ export function secaoRelatorio(ctx) {
       m.mesesPessoais.some((p) => p.mestre) && h('p', { class: 'ajuda' }, 'Um mês marcado como 11/2 ou 22/4 aparece nos dois números.'),
       gruposDeMeses(m.mesesPessoais).map(([numero, meses]) =>
         texto(FUTURO_POR_NUMERO[numero], { titulo: `Número ${numero}: ${LISTA.format(meses)}` }))),
-    h('p', { class: 'ajuda' }, 'Leitura simbólica; não constitui fato científico nem previsão garantida.'),
   );
 }
 
