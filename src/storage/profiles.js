@@ -18,8 +18,14 @@ function ler(storage, chave) {
 const idPadrao = () =>
   globalThis.crypto?.randomUUID?.() ?? `perfil-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
+/**
+ * Recebe um objeto com a API de localStorage e devolve operações sobre os perfis.
+ * Injetar storage e gerarId permite testar persistência com uma Map e IDs previsíveis.
+ * Só nome, data e id são salvos; ao abrir, o motor recalcula o mapa.
+ */
 export function criarRepositorioDePerfis(storage, gerarId = idPadrao) {
   const carregar = () => {
+    // Dados ausentes ou JSON inválido viram lista vazia para não impedir abrir a aplicação.
     try {
       const lista = JSON.parse(ler(storage, CHAVE_PERFIS) ?? '[]');
       return Array.isArray(lista) ? lista : [];
@@ -27,6 +33,7 @@ export function criarRepositorioDePerfis(storage, gerarId = idPadrao) {
       return [];
     }
   };
+  // localStorage só armazena texto: serializa a lista inteira a cada escrita.
   const persistir = (lista) => storage.setItem(CHAVE_PERFIS, JSON.stringify(lista));
   const ativo = () => ler(storage, CHAVE_ATIVO) === '1';
   const exigirAtivo = () => {
@@ -45,6 +52,7 @@ export function criarRepositorioDePerfis(storage, gerarId = idPadrao) {
       const lista = carregar();
       const perfil = { id: id ?? gerarId(), nome, data };
       const indice = lista.findIndex((p) => p.id === perfil.id);
+      // O id identifica o registro; nomes iguais podem pertencer a perfis diferentes.
       if (indice >= 0) lista[indice] = perfil;
       else lista.push(perfil);
       persistir(lista);
@@ -55,6 +63,8 @@ export function criarRepositorioDePerfis(storage, gerarId = idPadrao) {
     },
     /** Apaga todos os dados locais do aplicativo e desativa o armazenamento. */
     excluirTudo() {
+      // Primeiro coleta as chaves: remover durante a iteração alteraria os índices.
+      // O prefixo restringe a exclusão a este aplicativo, incluindo sua preferência de tema.
       const chaves = [];
       for (let i = 0; i < storage.length; i += 1) {
         const chave = storage.key(i);

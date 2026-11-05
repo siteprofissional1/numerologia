@@ -1,3 +1,5 @@
+/* Componentes visuais construídos por src/ui/. As classes indicam o papel de cada
+   elemento; as cores vêm de tokens.css e o posicionamento geral vem de layout.css. */
 h1, h2, h3, h4 { font-family: var(--serifa); line-height: 1.25; font-weight: 600; margin: 0; }
 h1 { font-size: clamp(1.75rem, 4vw, 2.5rem); }
 h2 { font-size: 1.625rem; outline: none; }
@@ -6,6 +8,7 @@ h4 { font-size: 1rem; }
 p { margin: 0 0 12px; }
 a { color: var(--acento); }
 
+/* Mantém visível a posição de navegação por teclado, sem depender apenas da cor de fundo. */
 :focus-visible { outline: 2px solid var(--acento); outline-offset: 2px; }
 
 .secao > * + * { margin-top: 20px; }
@@ -22,6 +25,7 @@ a { color: var(--acento); }
 .cartao > * + * { margin-top: 10px; }
 .cartao > p:last-child { margin-bottom: 0; }
 
+/* auto-fit adapta o número de colunas ao espaço; min(100%, ...) evita transbordar no celular. */
 .grade { display: grid; gap: 14px; }
 .grade-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
 .grade-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); }
@@ -103,6 +107,7 @@ legend { padding: 0 6px; font-weight: 600; }
 /* Interpretações */
 .interp > * + * { margin-top: 6px; }
 .interp p { margin-bottom: 0; }
+/* A passagem original recebe tipografia de leitura; metadados e notas ficam em outro estilo. */
 .interp.literal > p:not(.fonte, .nota-editorial) { font-family: var(--serifa); font-size: 1.0625rem; line-height: 1.55; }
 .fonte { color: var(--tinta-3); font-size: 0.8125rem; }
 .nota-editorial { font-size: 0.875rem; color: var(--tinta-2); font-style: italic; }
@@ -180,6 +185,7 @@ td.num, th.num { font-variant-numeric: tabular-nums; }
 .definicao dt { color: var(--tinta-3); }
 .definicao dd { margin: 0; }
 @media (pointer: coarse) {
+  /* Em dispositivos de toque, até os botões pequenos mantêm uma área maior para o dedo. */
   .botao.pequeno { min-height: 44px; }
 }
 
@@ -209,5 +215,6 @@ td.num, th.num { font-variant-numeric: tabular-nums; }
 .status:empty { display: none; }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* A transição só é aplicada quando o usuário não solicitou redução de movimento. */
   .barra-marca { transition: width 150ms ease-out; }
 }

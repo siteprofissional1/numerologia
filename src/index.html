@@ -1,4 +1,6 @@
 <!doctype html>
+<!-- Molde HTML de desenvolvimento. Para estudar a lógica, comece por src/main.js.
+     O build reúne este molde, o JavaScript e os estilos no index.html da raiz. -->
 <html lang="pt-BR">
   <head>
     <meta charset="utf-8" />
@@ -8,9 +10,11 @@
     <meta name="theme-color" content="#ffffff" />
     <title>Mapa Numerológico</title>
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%232b4c7e'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' fill='white' text-anchor='middle'%3E9%3C/text%3E%3C/svg%3E" />
+    <!-- O módulo de entrada importa os cálculos e monta as telas após carregar o documento. -->
     <script type="module" src="./main.js"></script>
   </head>
   <body>
+    <!-- Atalho de teclado para chegar ao conteúdo sem percorrer todo o menu. -->
     <a class="pular" href="#conteudo">Pular para o conteúdo</a>
     <div class="app">
       <header class="topo">
@@ -23,11 +27,13 @@
           <button type="button" class="tema-botao" id="tema-escuro" aria-pressed="false" aria-label="Tema escuro: fundo preto e letras brancas" title="Fundo preto e letras brancas">🌙</button>
         </div>
       </header>
+      <!-- main.js preenche estes contêineres conforme o fragmento #/secao da URL. -->
       <nav class="lateral" id="navegacao" aria-label="Seções do aplicativo"></nav>
       <main class="conteudo" id="conteudo" tabindex="-1">
         <noscript>Este aplicativo calcula tudo no navegador e precisa de JavaScript ativado.</noscript>
       </main>
     </div>
+    <!-- A região viva anuncia mensagens breves; o dialog é reutilizado para os números. -->
     <div class="status" id="status" role="status" aria-live="polite"></div>
     <dialog class="detalhe" id="detalhe" aria-labelledby="detalhe-titulo"></dialog>
   </body>

@@ -1,3 +1,9 @@
+/**
+ * Apresentação dos resultados já existentes em ctx.estado.mapa.
+ * Os componentes recebem dados calculados; fórmulas e valores vêm de src/domain.
+ * blocoTexto busca as interpretações pela chave do registro, sem alterar as passagens.
+ * Várias peças deste arquivo também são usadas no relatório completo.
+ */
 import { DIAS_NASCIMENTO } from '../data/birth-days.js';
 import { CAMINHOS_DESTINO } from '../data/destiny-meanings.js';
 import { ELEMENTOS_TEXTO, NOTA_ELEMENTO_VOCACAO } from '../data/elements.js';
@@ -48,6 +54,7 @@ const notaLeitura = (posicao) => {
   return posicao.apelidos ?? '';
 };
 
+/** O cartão é um botão: abre o detalhe da posição por mouse, toque ou teclado. */
 function cartaoNumero(posicao, ctx, { valor, nota } = {}) {
   return h('button', {
     type: 'button',
@@ -97,6 +104,7 @@ export function cabecalhoMapa(ctx, acoes) {
   ];
 }
 
+/** Mostra grafia, normalização, valor e tipo de cada letra de uma palavra. */
 function palavraVisual(palavra) {
   return h('div', { class: 'bloco' },
     h('h4', {}, palavra.original),
@@ -112,12 +120,14 @@ function palavraVisual(palavra) {
         h('span', { class: 'letra-tipo' }, l.tipo === 'vogal' ? 'vogal' : 'cons.')))));
 }
 
+/** Reaproveita os passos do motor para mostrar como cada posição do nome foi obtida. */
 function cartaoPosicaoNome(p) {
   return cartao(`${p.rotulo}: ${p.exibicao}`,
     h('p', { class: 'ajuda' }, p.formula),
     etapas(p.passos));
 }
 
+/** Decompõe visualmente o nome e apresenta as três somas correspondentes. */
 export function secaoNome(ctx) {
   const m = ctx.estado.mapa;
   return secao('Análise do nome',
@@ -130,6 +140,7 @@ export function secaoNome(ctx) {
   );
 }
 
+/** Converte a contagem por número no formato genérico aceito pelo gráfico de barras. */
 export function graficoFrequencias(m) {
   return barras(
     Object.entries(m.frequencias.contagem).map(([n, v]) => ({ rotulo: n, valor: v })),
@@ -137,6 +148,7 @@ export function graficoFrequencias(m) {
   );
 }
 
+/** Separa presença, ausência e maior contagem; empate preserva todos os números mais frequentes. */
 export function secaoFrequencias(ctx) {
   const m = ctx.estado.mapa;
   const f = m.frequencias;
@@ -152,6 +164,7 @@ export function secaoFrequencias(ctx) {
   );
 }
 
+/** Mostra cada interpretação de aptidão e associa as faltas às posições que as suprem. */
 export function secaoAptidoes(ctx) {
   const m = ctx.estado.mapa;
   const f = m.frequencias;
@@ -172,6 +185,7 @@ export function secaoAptidoes(ctx) {
   );
 }
 
+/** Apresenta quantidades por grupo e suas leituras; as quantidades já vêm do mapa. */
 export function secaoPlanos(ctx) {
   const m = ctx.estado.mapa;
   const ordem = ['materiais', 'emocionais', 'mentais', 'intuitivos'];
@@ -190,6 +204,7 @@ export function secaoPlanos(ctx) {
   );
 }
 
+/** Reúne leituras próprias do dia, do elemento, do Destino e da Realidade. */
 export function secaoNascimento(ctx) {
   const m = ctx.estado.mapa;
   const el = ELEMENTOS_TEXTO[m.dia.chaveElemento];
@@ -214,6 +229,7 @@ export function secaoNascimento(ctx) {
   );
 }
 
+/** Transforma a matriz de células em um quadro acessível, indicando ausências e repetições. */
 export function quadroVisual(q) {
   return h('div', { class: 'quadro', role: 'table', 'aria-label': 'Quadro numerológico' },
     q.celulas.map((linha) => h('div', { role: 'row', style: { display: 'contents' } },
@@ -269,12 +285,14 @@ export function secaoQuadro(ctx) {
   );
 }
 
+/** Explica a alternativa de 36 − Destino apenas quando o Destino conserva um número mestre. */
 export function avisoEncerramento(m) {
   const e = m.pinaculos.encerramento;
   return e.ambiguo && aviso('Destino principal:',
     `o livro não esclarece a fórmula 36 − N para 11 ou 22. Literal: ${e.alternativas.literal.formula}. Reduzido: ${e.alternativas.reduzido.formula}. Em uso: ${e.formula}.`);
 }
 
+/** A barra, a tabela e os cartões usam a mesma lista de períodos calculados. */
 export function secaoPinaculos(ctx) {
   const m = ctx.estado.mapa;
   const p = m.pinaculos;
@@ -295,6 +313,7 @@ export function secaoPinaculos(ctx) {
 
 const TITULO_REFERENCIA = 'Leitura correspondente ao mesmo número';
 
+/** Associa o ciclo à leitura do mesmo número e inclui o exemplo específico quando aplicável. */
 export function textoCiclo(ciclo, ctx, titulo = TITULO_REFERENCIA) {
   return [
     ciclo.ordem === 1 && ciclo.valor === 4 && blocoTexto(EXEMPLOS_ESPECIFICOS.ciclo4NoPrimeiroPinaculo, ctx),
@@ -302,6 +321,7 @@ export function textoCiclo(ciclo, ctx, titulo = TITULO_REFERENCIA) {
   ];
 }
 
+/** Mantém desafio zero sem interpretação; para os demais, seleciona a passagem correspondente. */
 export function textoDesafio(desafio, ctx, titulo = TITULO_REFERENCIA) {
   if (desafio.zero) return [titulo !== TITULO_REFERENCIA && h('h4', {}, titulo), h('p', {}, SEM_TEXTO_ZERO)];
   return [
@@ -310,6 +330,7 @@ export function textoDesafio(desafio, ctx, titulo = TITULO_REFERENCIA) {
   ];
 }
 
+/** Apresenta juntos os períodos para permitir comparar suas faixas de idade. */
 export function secaoCiclos(ctx) {
   const m = ctx.estado.mapa;
   return secao('Ciclos e desafios',
@@ -331,6 +352,7 @@ export function secaoCiclos(ctx) {
   );
 }
 
+/** Os controles chamam main.js para validar o ano e recalcular as leituras dependentes dele. */
 export function navegadorAno(ctx) {
   const ano = ctx.estado.mapa.anoConsulta;
   return h('div', { class: 'navegador-ano sem-impressao' },
@@ -344,6 +366,7 @@ export function navegadorAno(ctx) {
     h('button', { type: 'button', class: 'botao secundario', onClick: () => ctx.acoes.definirAno(ano + 1), 'aria-label': 'Ano seguinte' }, 'Seguinte →'));
 }
 
+/** Resume os períodos ativos na idade completada no ano consultado. */
 export function blocoVigentes(m) {
   const v = m.vigentes;
   if (!v) return aviso('Antes do nascimento:', `o ano ${m.anoConsulta} é anterior ao nascimento; não há pináculo, ciclo ou desafio.`);
@@ -357,6 +380,7 @@ export function blocoVigentes(m) {
 
 const blocoFuturo = (numero, titulo, ctx) => blocoTexto(FUTURO_POR_NUMERO[numero], ctx, { titulo });
 
+/** Exibe a conta anual e relaciona seu resultado aos períodos ativos do mapa. */
 export function secaoAno(ctx) {
   const m = ctx.estado.mapa;
   const a = m.anoPessoal;
@@ -376,6 +400,7 @@ export function secaoAno(ctx) {
   );
 }
 
+/** A seleção mensal só troca a leitura mostrada; os doze resultados já foram calculados. */
 export function secaoMes(ctx) {
   const m = ctx.estado.mapa;
   const mesAtual = m.mesesPessoais[ctx.estado.mes - 1];

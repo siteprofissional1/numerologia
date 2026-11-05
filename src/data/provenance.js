@@ -1,3 +1,7 @@
+/**
+ * Fábrica comum de descritores: mantém as chaves e os metadados dos catálogos consistentes.
+ * Metadados de procedência servem à auditoria; não são citações exibidas no relatório.
+ */
 import { OBRA } from '../config/rules.js';
 
 export const CAPITULOS = Object.freeze({
@@ -12,9 +16,9 @@ export const CAPITULOS = Object.freeze({
 });
 
 /**
- * Registro rastreável. O campo `interpretacao` é sempre um RESUMO FIEL escrito
- * para este projeto; o texto literal, quando existe, vem da cópia privada
- * gerada no computador do usuário, pela `chave` do registro.
+ * Registro rastreável. O campo `interpretacao` conserva os resumos dos descritores
+ * para documentação interna. A interface exige a transcrição literal pela `chave`
+ * do registro em ui/components.js; esses resumos não são usados como fallback.
  */
 export function registro({
   chave,

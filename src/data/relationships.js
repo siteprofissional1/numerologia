@@ -1,3 +1,7 @@
+/**
+ * Descritores das leituras de relacionamentos e da definição de Realidade.
+ * As chaves relacao.* ligam cada assunto ao texto literal, sem calcular compatibilidade aqui.
+ */
 import { registro } from './provenance.js';
 
 const r = (chave, paginaInicial, paginaFinal, interpretacao, extras = {}) =>

@@ -1,7 +1,12 @@
+/**
+ * Testes de integração no Chromium com Playwright: preenchem os formulários e usam
+ * o aplicativo como uma pessoa usaria. await espera as ações e verificações assíncronas;
+ * cada teste recebe uma página isolada para não herdar o armazenamento de outro caso.
+ */
 import { existsSync, readFileSync } from 'node:fs';
 import { expect, test } from '@playwright/test';
 
-/** O texto do livro não é versionado: sem a importação local, o app usa os resumos. */
+/** A transcrição acompanha o projeto; estes testes também verificam a leitura literal incluída. */
 const TEM_TEXTO_DO_LIVRO = existsSync(new URL('../src/data/private/transcricoes.json', import.meta.url));
 const TEXTOS = JSON.parse(readFileSync(new URL('../src/data/private/transcricoes.json', import.meta.url), 'utf8')).textos;
 

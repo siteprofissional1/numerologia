@@ -1,3 +1,4 @@
+/** Leituras por ano e mês, calculadas sem alterar as posições de nascimento do mapa. */
 import { exibicao, reduzirSimples, somaDigitos, textoCaminho } from './reduce.js';
 
 export const NOMES_MESES = Object.freeze([
@@ -5,6 +6,7 @@ export const NOMES_MESES = Object.freeze([
   'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
 ]);
 
+/** Restringe a consulta ao intervalo aceito pelo formulário e pela formatação das datas. */
 export function exigirAno(ano) {
   if (!Number.isInteger(ano) || ano < 1 || ano > 9999) {
     throw new RangeError('O ano consultado precisa ser um inteiro entre 1 e 9999.');
@@ -55,6 +57,8 @@ export function calcularMesPessoal(anoPessoal, mes) {
   }
   const soma = anoPessoal.valor + mes;
   const reducao = reduzirSimples(soma);
+  // A conta principal usa mês 10, 11 ou 12 literalmente. Esta segunda conta apenas
+  // informa se reduzir o mês antes mudaria o registro de um número mestre intermediário.
   const alternativa = reduzirSimples(anoPessoal.valor + reduzirSimples(somaDigitos(mes)).valor);
   return {
     mes,
@@ -73,6 +77,7 @@ export function calcularMesPessoal(anoPessoal, mes) {
   };
 }
 
+/** Cria os doze meses na ordem do calendário; índices da lista começam em 0, meses em 1. */
 export function calcularMesesPessoais(anoPessoal) {
   return NOMES_MESES.map((_, i) => calcularMesPessoal(anoPessoal, i + 1));
 }
@@ -80,6 +85,7 @@ export function calcularMesesPessoais(anoPessoal) {
 /** Pináculo, ciclo e desafio da idade completada no ano consultado. */
 export function vigentesNaIdade(mapa, idade) {
   if (idade < 0) return null;
+  // null no fim da faixa significa que ela continua pelo restante da vida.
   const naFaixa = (item) => idade >= item.inicio && (item.fim === null || idade <= item.fim);
   return {
     idade,

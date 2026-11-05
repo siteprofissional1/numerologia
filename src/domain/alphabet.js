@@ -11,6 +11,8 @@ export const TABELA_LETRAS = Object.freeze({
   9: 'IR',
 });
 
+// Inverte a tabela para consulta direta: em vez de procurar a letra em cada grupo,
+// valorLetra('J') pode acessar imediatamente o par J → 1. freeze evita alterações acidentais.
 const VALORES = Object.freeze(
   Object.fromEntries(
     Object.entries(TABELA_LETRAS).flatMap(([numero, letras]) =>

@@ -1,4 +1,8 @@
 /**
+ * Cada item registra uma divergência e a decisão adotada, sem executar uma correção.
+ * As correções aplicáveis são implementadas explicitamente no domínio ou no importador.
+ */
+/**
  * Registro de inconsistências: alimenta a seção do aplicativo e gera
  * docs/INCONSISTENCIAS_DO_LIVRO.md. "tipo" separa erro editorial, contradição,
  * lacuna e provável erro de digitalização.

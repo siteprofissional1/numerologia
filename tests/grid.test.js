@@ -1,3 +1,7 @@
+/**
+ * Testes do quadro: conferem algarismos usados, células, repetições e linhas completas.
+ * O resultado esperado usa a disposição própria do mapa, não a ordem numérica comum.
+ */
 import { describe, expect, it } from 'vitest';
 import { calcularQuadro, digitosDaData, LAYOUT_QUADRO } from '../src/domain/birth-grid.js';
 

@@ -21,6 +21,8 @@ const POR_EXTENSO = {
   Um: 1, Dois: 2, 'Três': 3, Quatro: 4, Cinco: 5, Seis: 6,
   Sete: 7, Oito: 8, Nove: 9, Onze: 11, 'Vinte e Dois': 22,
 };
+// Symbol distingue "ignorar esta linha" de "encerrar a seção atual" (false).
+// Isso permite pular um subtítulo sem perder o restante da interpretação.
 const PULAR = Symbol('pular linha de título');
 const RE_NUMERO = /^Número (Um|Dois|Três|Quatro|Cinco|Seis|Sete|Oito|Nove|Onze|Vinte e Dois)$/;
 
@@ -32,6 +34,7 @@ export function linhasPorPagina(textoPdf) {
     for (const bruta of pagina.split('\n')) {
       const linha = bruta.trim();
       if (linha === '' || linha === String(numero)) continue;
+      // O recuo é preservado como dado: ele ajuda a reconstruir parágrafos após tirar as linhas.
       linhas.push({ pagina: numero, texto: linha, recuo: bruta.length - bruta.trimStart().length });
     }
   });
@@ -65,6 +68,11 @@ export function paragrafos(linhas) {
   return blocos.map(juntar).join('\n\n');
 }
 
+/**
+ * Percorre uma faixa de páginas mantendo a chave da seção em andamento.
+ * detectar devolve uma chave para abrir seção, null para continuar, PULAR para
+ * ignorar uma linha ou false para parar de acumular até encontrar outro título.
+ */
 function secoes(linhas, paginaIni, paginaFim, detectar) {
   const resultado = {};
   let atual = null;
@@ -105,6 +113,8 @@ const RE_FUTURO = /(?:Quando aplicado a acontecimentos futuros|Em relação a(?:
 
 export function extrairTranscricoes(textoPdf) {
   const linhas = linhasPorPagina(textoPdf);
+  // Os nomes das chaves são o contrato com src/data e ui/components.js.
+  // A extração organiza a fonte; não calcula números de uma pessoa.
   const textos = {};
 
   // Significados gerais, p. 6–15
@@ -182,6 +192,7 @@ export function extrairTranscricoes(textoPdf) {
   }));
 
   // Passagens contínuas
+  // Cada par de expressões delimita o início incluído e o começo da próxima seção excluído.
   const TRECHOS = {
     'definicao.ambicao': [/^1\.\s+A soma das vogais dá/, /^2\.\s+A soma das consoantes indica/],
     'definicao.personalidade': [/^2\.\s+A soma das consoantes indica/, /^3\.\s+A soma das vogais e das consoantes/],
@@ -244,9 +255,12 @@ export function extrairTranscricoes(textoPdf) {
   return textos;
 }
 
+/** Coordena leitura da fonte, extração e gravação do JSON usado pela aplicação. */
 async function principal() {
   const caminho = resolve(process.argv[2] ?? PDF_PADRAO);
   if (!process.argv[2] && !existsSync(caminho) && existsSync(SAIDA)) {
+    // No CI o PDF pode estar ausente. Só reutiliza a transcrição incluída se sua soma
+    // de verificação ainda coincidir; um caminho explícito errado não usa este atalho.
     const copia = JSON.parse(readFileSync(SAIDA, 'utf8'));
     const hash = createHash('sha256').update(JSON.stringify(copia.textos)).digest('hex');
     if (hash !== copia.integridade || !copia.fonte?.sha256) {
@@ -255,6 +269,8 @@ async function principal() {
     console.log('PDF ausente: usando a transcrição já conferida, incluída no projeto.');
     return;
   }
+  // execFile passa argumentos separados, sem interpretar o caminho como código de shell.
+  // promisify permite aguardar a conclusão com await; -layout preserva os recuos da fonte.
   const { stdout: textoPdf } = await promisify(execFile)('pdftotext', ['-layout', caminho, '-'], {
     encoding: 'utf8',
     maxBuffer: 32 * 1024 * 1024,
@@ -269,6 +285,8 @@ async function principal() {
           arquivo: 'numerologia-mary-anderson-fratermarcos.pdf',
           sha256: createHash('sha256').update(readFileSync(caminho)).digest('hex'),
         },
+        // Este hash detecta mudanças no conteúdo. O hash de fonte identifica o PDF usado.
+        // Eles não são assinaturas digitais nem comprovam autoria de um arquivo recebido.
         integridade: createHash('sha256').update(JSON.stringify(textos)).digest('hex'),
         textos,
       },
@@ -279,4 +297,6 @@ async function principal() {
   console.log(`${Object.keys(textos).length} passagens gravadas em ${SAIDA}`);
 }
 
+// Importar as funções nos testes não deve executar a ferramenta nem regravar o JSON.
+// principal só roda quando este arquivo é chamado diretamente pelo Node.
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) await principal();

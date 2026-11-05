@@ -1,3 +1,7 @@
+/**
+ * Descritores dos quatro planos de expressão e das observações associadas.
+ * numero é a lista de valores do grupo; sua contagem é feita em domain/name-numbers.js.
+ */
 import { registro } from './provenance.js';
 
 const p = (chave, nome, numeros, interpretacao, observacaoEditorial = null) =>

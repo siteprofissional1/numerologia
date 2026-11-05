@@ -1,3 +1,7 @@
+/**
+ * Testes das posições do nome: preparam uma análise, executam as somas e conferem
+ * subtotais, números mestres e entradas sem vogais ou consoantes.
+ */
 import { describe, expect, it } from 'vitest';
 import { decomporNome, validarNome } from '../src/domain/normalize-name.js';
 import { calcularNumerosDoNome } from '../src/domain/numerology-map.js';

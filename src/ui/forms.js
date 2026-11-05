@@ -1,3 +1,8 @@
+/**
+ * Constrói os formulários e liga os campos a ctx.estado. As ações de main.js
+ * confirmam as entradas e redesenham a tela quando necessário.
+ * As rotinas executarOraculo e executarComparacao fazem a ponte com o domínio.
+ */
 import { SIGNIFICADOS_GERAIS } from '../data/general-meanings.js';
 import { LEITURAS_ORACULO } from '../data/oracle-readings.js';
 import { RELACIONAMENTOS } from '../data/relationships.js';
@@ -22,6 +27,8 @@ export function mascararData(valor) {
   return resultado;
 }
 
+// for/id associam rótulo e campo; aria-describedby associa o texto de ajuda.
+// O mesmo componente atende o cadastro principal e as duas pessoas da comparação.
 const campoTexto = ({ id, rotulo, ajuda, valor, autocomplete = 'off', autocapitalize = 'words', inputmode, placeholder, erro, onInput }) =>
   h('div', { class: 'campo' },
     h('label', { for: id }, rotulo),
@@ -33,6 +40,7 @@ const campoTexto = ({ id, rotulo, ajuda, valor, autocomplete = 'off', autocapita
     }),
     ajuda && h('p', { class: 'ajuda', id: `${id}-ajuda` }, ajuda));
 
+// A máscara facilita digitar; quem decide se uma data existe é interpretarData no domínio.
 const campoData = (props) => campoTexto({
   placeholder: 'DD/MM/AAAA',
   inputmode: 'numeric',
@@ -44,11 +52,14 @@ const campoData = (props) => campoTexto({
   },
 });
 
+// role=alert anuncia erros novos a tecnologias assistivas, além de mostrá-los na tela.
 const listaErros = (erros) =>
   erros?.length > 0 && h('div', { class: 'erros', role: 'alert' }, h('ul', {}, erros.map((x) => h('li', {}, x))));
 
+/** Tela inicial: a digitação atualiza o formulário; só o submit confirma um novo mapa. */
 export function secaoInicio(ctx) {
   const { formulario, errosFormulario } = ctx.estado;
+  // Não redesenha a cada letra: isso mantém o cursor estável enquanto a pessoa digita.
   const atualizar = (campo) => (e) => { formulario[campo] = e.target.value; };
   return h('section', { class: 'secao' },
     h('div', {},
@@ -76,6 +87,7 @@ export function secaoInicio(ctx) {
   );
 }
 
+/** Consulta independente do mapa: três opções numéricas e uma categoria escolhida pelo usuário. */
 export function secaoOraculo(ctx) {
   const o = ctx.estado.oraculo;
   const seletor = (i) => h('div', { class: 'campo' },
@@ -117,6 +129,7 @@ export function secaoOraculo(ctx) {
   );
 }
 
+/** Valida a seleção e guarda o resultado que secaoOraculo apresentará na próxima renderização. */
 export function executarOraculo(o) {
   if (o.numeros.some((n) => n === null)) {
     o.erros = ['Escolha os três números.'];
@@ -127,6 +140,7 @@ export function executarOraculo(o) {
   o.resultado = consultarOraculo(o.categoria, o.numeros);
 }
 
+// As afinidades são direcionais; a frase indica se a inclusão ocorre em um ou nos dois sentidos.
 const afinidadeTexto = (p) => {
   if (!p.afinidade) return 'Não aplicável';
   const { aListaB, bListaA } = p.afinidade;
@@ -136,6 +150,7 @@ const afinidadeTexto = (p) => {
   return 'Sem afinidade listada';
 };
 
+/** Recebe uma comparação já calculada e monta tabelas e interpretações sem refazer as contas. */
 function resultadoCompat(c, ctx, nomeA, nomeB) {
   const classificadas = c.posicoes.filter((p) => p.classificacao);
   const registroClasse = (cl) => RELACIONAMENTOS[cl];
@@ -184,6 +199,7 @@ function resultadoCompat(c, ctx, nomeA, nomeB) {
   ];
 }
 
+/** Mantém os campos das pessoas A e B separados, inclusive quando uma validação falha. */
 export function secaoCompatibilidade(ctx) {
   const c = ctx.estado.compat;
   const pessoa = (chave, titulo) => h('fieldset', { class: 'formulario' },
@@ -212,9 +228,11 @@ export function secaoCompatibilidade(ctx) {
   );
 }
 
+/** Gera os dois mapas no mesmo ano e só compara quando ambos são válidos. */
 export function executarComparacao(c, anoConsulta) {
   const a = gerarMapa({ nome: c.a.nome, data: c.a.data, anoConsulta });
   const b = gerarMapa({ nome: c.b.nome, data: c.b.data, anoConsulta });
+  // Prefixar a pessoa ajuda a localizar o campo errado sem apagar os demais dados.
   const erros = [
     ...(a.ok ? [] : a.erros.map((e) => `Pessoa A: ${e}`)),
     ...(b.ok ? [] : b.erros.map((e) => `Pessoa B: ${e}`)),
@@ -225,6 +243,7 @@ export function executarComparacao(c, anoConsulta) {
     : { comparacao: compararMapas(a, b), nomeA: a.pessoa.nome, nomeB: b.pessoa.nome };
 }
 
+/** Exibe os comandos do repositório local; salvar só é oferecido após ativação explícita. */
 export function secaoPerfis(ctx) {
   const repo = ctx.estado.repositorio;
   const ativo = repo.ativo();

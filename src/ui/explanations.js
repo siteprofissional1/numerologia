@@ -1,3 +1,4 @@
+/** Diálogos e páginas explicativas; os valores exibidos vêm do mapa, sem novos cálculos. */
 import { CLASSIFICACOES, REGRAS } from '../data/rules-catalog.js';
 import { INCONSISTENCIAS } from '../data/inconsistencies.js';
 import { blocoTexto, definicoes, etapas, secao } from './components.js';
@@ -14,6 +15,7 @@ export function abrirDetalhe(posicao, ctx) {
   const mapa = ctx.estado.mapa;
   const regra = regraPorId(posicao.regra);
   const registros = posicao.registros ?? registrosDaPosicao(posicao, mapa);
+  // O mesmo dialog é reutilizado: limpa a posição anterior antes de mostrar outra.
   limpar(dialogo);
   anexar(dialogo, [
     h('div', { class: 'detalhe-topo' },
@@ -34,6 +36,7 @@ export function abrirDetalhe(posicao, ctx) {
       regra && ['11 e 22', semCitacoesDePagina(regra.mestres)],
     ]),
   ]);
+  // O dialog nativo oferece fechamento por Escape e controla o foco enquanto está aberto.
   dialogo.showModal();
 }
 

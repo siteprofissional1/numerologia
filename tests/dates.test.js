@@ -1,3 +1,7 @@
+/**
+ * Testes de calendário e nascimento: incluem datas inválidas, anos bissextos e reduções.
+ * As funções não dependem do relógio nem de fuso horário, tornando os resultados repetíveis.
+ */
 import { describe, expect, it } from 'vitest';
 import {
   calcularComponentes,

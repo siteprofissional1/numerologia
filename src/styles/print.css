@@ -1,3 +1,5 @@
+/* Ativado pela impressão do navegador, inclusive ao escolher Salvar como PDF.
+   Esconde os controles e ajusta a leitura em papel, sem alterar os cálculos ou textos. */
 @media print {
   :root, :root[data-theme='dark'] {
     color-scheme: light;
@@ -15,6 +17,7 @@
   .cartao { border: 1px solid #bbb; padding: 10px 12px; }
   .secao-relatorio { break-inside: auto; margin-top: 16pt; }
   .secao-relatorio > h3 { break-after: avoid; border-bottom: 1px solid #000; padding-bottom: 2pt; }
+  /* Solicita manter estes blocos juntos quando couberem no espaço disponível da folha. */
   .interp, .barra-linha, tr, .quadro, .tempo { break-inside: avoid; }
   .tempo-idade { display: block !important; }
   .barra-marca, .tempo-seg, .quadro-celula.cheia, .letra.vogal { print-color-adjust: exact; -webkit-print-color-adjust: exact; }

@@ -5,6 +5,7 @@ import { h } from './dom.js';
  * informação é legível por leitor de tela e na impressão.
  */
 export function barras(itens, { rotulo = '28px', titulo } = {}) {
+  // O mínimo 1 evita divisão por zero quando todos os valores forem zero.
   const maior = Math.max(1, ...itens.map((i) => i.valor));
   return h('ul', { class: 'barras', style: { '--rotulo': rotulo }, 'aria-label': titulo },
     itens.map((item) =>
@@ -13,6 +14,7 @@ export function barras(itens, { rotulo = '28px', titulo } = {}) {
         h('span', { class: 'barra-area' },
           h('span', {
             class: `barra-marca${item.valor === 0 ? ' zero' : ''}`,
+            // Reserva espaço para o número escrito na ponta, inclusive no celular.
             style: { width: `${(item.valor / maior) * 85}%` },
             'aria-hidden': 'true',
           }),

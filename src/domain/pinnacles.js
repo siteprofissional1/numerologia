@@ -1,3 +1,4 @@
+/** Valores dos quatro pináculos e faixas de idade compartilhadas com os desafios. */
 import { ehBissexto } from './birth-numbers.js';
 import { exibicao, reduzirComMestres, textoCaminho } from './reduce.js';
 
@@ -6,6 +7,7 @@ export function calcularIdadeEncerramento(destino, regras) {
   const literal = 36 - destino.valor;
   const reduzido = 36 - destino.reduzido;
   const ambiguo = destino.mestre !== null;
+  // A escolha só tem efeito quando o Destino conserva 11 ou 22; nos demais casos coincide.
   const usaReduzido = ambiguo && regras.idadeDestinoMestre === 'reduzido';
   const n = usaReduzido ? destino.reduzido : destino.valor;
   return {
@@ -27,6 +29,7 @@ export function calcularIdadeEncerramento(destino, regras) {
  */
 export function calcularFaixas(idadeFim, modo) {
   const duracao = modo === 'tabela' ? 10 : 9;
+  // Os limites são inclusivos: depois de terminar aos 31, a fase seguinte começa aos 32.
   const inicio2 = idadeFim + 1;
   const inicio3 = inicio2 + duracao;
   const inicio4 = inicio3 + duracao;
@@ -38,6 +41,7 @@ export function calcularFaixas(idadeFim, modo) {
   ];
 }
 
+/** Formata faixas finitas ou abertas; fim=null representa uma fase sem término calculado. */
 export function textoFaixa({ inicio, fim }) {
   if (inicio === 0) return `até ${fim} anos`;
   if (fim === null) return `${inicio} anos em diante`;
@@ -52,6 +56,7 @@ export function dataNaIdade(data, idade) {
   return `${p(dia)}/${p(data.mes)}/${p(ano, 4)}`;
 }
 
+/** Monta um item completo: valor, conta explicada, intervalo e data de início. */
 function pinaculo(ordem, formula, parcelas, faixa, data) {
   const reducao = reduzirComMestres(parcelas[0] + parcelas[1]);
   return {
@@ -68,6 +73,7 @@ function pinaculo(ordem, formula, parcelas, faixa, data) {
   };
 }
 
+/** Usa os componentes já reduzidos; o terceiro pináculo depende dos dois primeiros. */
 export function calcularPinaculos(componentes, destino, data, regras) {
   const D = componentes.dia.usado;
   const M = componentes.mes.usado;
@@ -75,6 +81,7 @@ export function calcularPinaculos(componentes, destino, data, regras) {
   const encerramento = calcularIdadeEncerramento(destino, regras);
   const faixas = calcularFaixas(encerramento.idade, regras.modoPinaculos);
 
+  // Mantém números e intervalos juntos para a tabela, a barra e o relatório concordarem.
   const p1 = pinaculo(1, 'Dia + Mês', [D, M], faixas[0], data);
   const p2 = pinaculo(2, 'Dia + Ano', [D, A], faixas[1], data);
   const p3 = pinaculo(3, '1º pináculo + 2º pináculo', [p1.valor, p2.valor], faixas[2], data);

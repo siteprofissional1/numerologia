@@ -1,3 +1,7 @@
+/**
+ * Exemplos completos com resultados conhecidos, usados como referência independente.
+ * Se uma alteração trocar a ordem das somas ou a política de mestres, estes casos a detectam.
+ */
 import { describe, expect, it } from 'vitest';
 import { gerarMapa, calcularNumerosDoNome } from '../src/domain/numerology-map.js';
 import { REGRAS_PADRAO } from '../src/config/rules.js';

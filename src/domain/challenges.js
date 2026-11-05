@@ -6,6 +6,7 @@ export function calcularDesafios(componentes, pinaculos) {
   const D = componentes.dia.simples;
   const M = componentes.mes.simples;
   const A = componentes.ano.simples;
+  // O valor absoluto elimina o sinal: |3 − 7| e |7 − 3| resultam no mesmo desafio 4.
   const d1 = Math.abs(D - M);
   const d2 = Math.abs(D - A);
   const definicoes = [
@@ -20,6 +21,7 @@ export function calcularDesafios(componentes, pinaculos) {
       ...d,
       exibicao: String(d.valor),
       zero: d.valor === 0,
+      // Cada desafio ocorre na faixa do pináculo de mesma ordem; não calcula outra duração.
       inicio: pinaculos.itens[i].inicio,
       fim: pinaculos.itens[i].fim,
       faixaTexto: pinaculos.itens[i].faixaTexto,

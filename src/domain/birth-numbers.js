@@ -1,9 +1,12 @@
+/** Validação do calendário e posições derivadas da data de nascimento. */
 import { exibicao, reduzirComMestres, reduzirSimples, somar, textoCaminho } from './reduce.js';
 
+/** Regra gregoriana: séculos só são bissextos se também forem divisíveis por 400. */
 export function ehBissexto(ano) {
   return (ano % 4 === 0 && ano % 100 !== 0) || ano % 400 === 0;
 }
 
+/** Devolve o limite usado para recusar datas como 31/04 ou 29/02 em ano comum. */
 export function diasNoMes(mes, ano) {
   if (mes === 2) return ehBissexto(ano) ? 29 : 28;
   return [4, 6, 9, 11].includes(mes) ? 30 : 31;
@@ -16,6 +19,7 @@ export function diasNoMes(mes, ano) {
 export function interpretarData(texto) {
   const entrada = String(texto ?? '').trim();
   if (entrada === '') return { ok: false, erros: ['Informe a data de nascimento.'] };
+  // A expressão verifica o formato; a validade do dia é conferida depois pelo calendário.
   const partes = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/.exec(entrada);
   if (!partes) return { ok: false, erros: ['Use o formato DD/MM/AAAA, por exemplo 15/03/1985.'] };
 
@@ -35,11 +39,13 @@ export function interpretarData(texto) {
   return { ok: true, dia, mes, ano };
 }
 
+/** Normaliza a apresentação com zeros à esquerda, sem transformar a data em horário. */
 export function formatarData({ dia, mes, ano }) {
   const p = (n, t = 2) => String(n).padStart(t, '0');
   return `${p(dia)}/${p(mes)}/${p(ano, 4)}`;
 }
 
+/** Guarda as duas reduções de cada parte da data para poder explicar as alternativas. */
 function componente(rotulo, bruto, politica) {
   const comMestres = reduzirComMestres(bruto);
   const simples = reduzirSimples(bruto);
@@ -67,6 +73,7 @@ export function calcularComponentes(data, regras) {
   };
 }
 
+/** A chave seleciona qual leitura de dia, mês e ano será somada para obter o Destino. */
 function destinoPorPolitica(componentes, chaveValor) {
   const parcelas = ['dia', 'mes', 'ano'].map((c) => componentes[c][chaveValor]);
   return { parcelas, reducao: reduzirComMestres(somar(parcelas)) };
@@ -80,6 +87,7 @@ export function calcularDestino(componentes) {
 
   let alternativa = null;
   if (temMestreNoComponente) {
+    // Só mostra uma alternativa quando conservar um componente mestre muda o Destino.
     const outra = componentes.politica === 'preservar'
       ? destinoPorPolitica(componentes, 'simples').reducao
       : reduzirComMestres(
@@ -137,14 +145,17 @@ export const ELEMENTOS = Object.freeze({
   }),
 });
 
+/** Procura o dia original na tabela; não deduz o grupo pela soma da data completa. */
 export function elementoDoDia(dia) {
   return Object.keys(ELEMENTOS).find((k) => ELEMENTOS[k].dias.includes(dia)) ?? null;
 }
 
+/** Consulta por número, usada na comparação de posições entre duas pessoas. */
 export function elementoDoNumero(numero) {
   return Object.keys(ELEMENTOS).find((k) => ELEMENTOS[k].numeros.includes(numero)) ?? null;
 }
 
+/** Reúne dia original, redução auxiliar e elemento sem trocar a leitura específica do dia. */
 export function calcularDiaNascimento(data) {
   const reducao = reduzirComMestres(data.dia);
   const chaveElemento = elementoDoDia(data.dia);

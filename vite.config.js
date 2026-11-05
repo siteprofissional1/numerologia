@@ -1,3 +1,7 @@
+/**
+ * Configuração de desenvolvimento, testes unitários e geração do HTML independente.
+ * Edite os arquivos em src/; index.html da raiz e dist/ são saídas deste build.
+ */
 import { createHash } from 'node:crypto';
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -18,13 +22,16 @@ function arquivoUnico() {
     apply: 'build',
     enforce: 'post',
     generateBundle(_, bundle) {
+      // O Vite já separou HTML, JavaScript e CSS. Este plugin reúne as saídas em uma página.
       const pagina = Object.values(bundle).find((f) => f.fileName.endsWith('.html'));
       const arquivos = Object.values(bundle).filter((f) => f !== pagina);
+      // Escapar fechamentos de script impede que uma string seja lida como fim da tag HTML.
       const js = arquivos
         .filter((f) => f.type === 'chunk')
         .map((f) => f.code.replace(/<\/script/gi, '<\\/script').replace(/<!--/g, '<\\!--'))
         .join('\n');
       const css = arquivos.filter((f) => f.fileName.endsWith('.css')).map((f) => f.source).join('\n');
+      // Os hashes autorizam exatamente os blocos embutidos gerados nesta execução.
       const csp = [
         "default-src 'none'",
         `script-src ${hash(js)}`,
@@ -43,10 +50,12 @@ function arquivoUnico() {
         .replace('</head>', () => `<style>${css}</style>\n  </head>`)
         .replace('</body>', () => `<script type="module">${js}</script>\n  </body>`);
 
+      // Depois de embutir os conteúdos, elimina as saídas avulsas que não são mais necessárias.
       pagina.source = html;
       for (const f of arquivos) delete bundle[f.fileName];
     },
     closeBundle() {
+      // Além de dist/, mantém a cópia da raiz para abrir pelo gerenciador de arquivos.
       if (html) writeFileSync(resolve(RAIZ, 'index.html'), html);
     },
   };
@@ -55,6 +64,7 @@ function arquivoUnico() {
 export default defineConfig(() => ({
   root: resolve(RAIZ, 'src'),
   envDir: RAIZ,
+  // Caminhos relativos atendem tanto file:// quanto a subpasta /numerologia/ do Pages.
   base: './',
   plugins: [arquivoUnico()],
   build: {

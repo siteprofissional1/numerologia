@@ -1,3 +1,7 @@
+/**
+ * Chaves das leituras do quadro 3×3: uso, direções e exemplo.
+ * O domínio detecta as linhas completas; ui/render.js escolhe as leituras a apresentar.
+ */
 import { registro } from './provenance.js';
 
 const q = (chave, interpretacao, observacaoEditorial = null) =>

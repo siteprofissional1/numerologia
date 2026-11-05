@@ -1,3 +1,7 @@
+/**
+ * Testes de persistência com armazenamento simulado: ativação, criação, edição e exclusão.
+ * O simulador permite conferir as chaves gravadas sem acessar dados de um navegador real.
+ */
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { criarRepositorioDePerfis } from '../src/storage/profiles.js';
 

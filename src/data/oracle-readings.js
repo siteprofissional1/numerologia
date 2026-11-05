@@ -1,3 +1,7 @@
+/**
+ * Leituras indexadas primeiro pela categoria e depois pelo resultado numérico.
+ * A chave inclui ambos, pois amor.5 e dinheiro.5 correspondem a interpretações diferentes.
+ */
 import { registro } from './provenance.js';
 
 const o = (categoria, numero, paginaInicial, paginaFinal, interpretacao) =>

@@ -1,4 +1,8 @@
 /**
+ * Cada id R-* conecta uma posição calculada à explicação de sua regra.
+ * Este catálogo documenta as fórmulas; o código que executa as contas fica em domain/.
+ */
+/**
  * Catálogo das regras: alimenta a seção "Explicação das regras" do aplicativo e
  * gera docs/REGRAS_COM_FONTES.md. Classificações: explicita, inferida, ambigua, contraditoria.
  */

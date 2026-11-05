@@ -1,3 +1,7 @@
+/**
+ * Descritores das leituras de Água, Fogo e Ar.
+ * A seleção do elemento está em domain/birth-numbers.js; aqui ficam chaves e metadados.
+ */
 import { registro } from './provenance.js';
 
 const e = (chave, paginaInicial, paginaFinal, campos) =>

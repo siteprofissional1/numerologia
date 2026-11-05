@@ -1,3 +1,8 @@
+/**
+ * Verificação executada antes do build: confere integridade, conteúdo e cobertura.
+ * Falhas de assert interrompem o processo com código de saída diferente de zero.
+ * Este script não altera a transcrição nem os descritores que está verificando.
+ */
 import assert from 'node:assert/strict';
 import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
@@ -10,6 +15,7 @@ const pdf = new URL('../../numerologia-mary-anderson-fratermarcos.pdf', import.m
 const { textos, fonte, integridade } = JSON.parse(readFileSync(new URL('src/data/private/transcricoes.json', raiz), 'utf8'));
 assert.equal(createHash('sha256').update(JSON.stringify(textos)).digest('hex'), integridade, 'Transcrição alterada após a conferência');
 assert.match(fonte.sha256, /^[a-f0-9]{64}$/);
+// Ignora apenas quebras de linha e espaços de composição ao comparar as passagens.
 const normalizar = (t) => t.replace(/-\s+/g, '-').replace(/\s+/g, ' ').trim();
 let bruto = null;
 if (existsSync(pdf)) {
@@ -32,6 +38,8 @@ for (const [chave, texto] of Object.entries(textos)) {
   assert.doesNotMatch(texto, /\bp\.\s*\d|\bpágina\s+\d/iu, `Citação em ${chave}`);
 }
 
+// Descobre recursivamente as chaves exportadas pelos catálogos, inclusive objetos aninhados.
+// Assim uma leitura nova exigida pela interface também precisa existir no JSON.
 const chaves = new Set();
 const visitar = (valor) => {
   if (!valor || typeof valor !== 'object') return;
@@ -43,6 +51,7 @@ for (const nome of readdirSync(new URL('src/data/', raiz)).filter((n) => n.endsW
 }
 for (const chave of chaves) assert.ok(textos[chave], `Falta o texto exigido pela interface: ${chave}`);
 
+// A existência das chaves não basta: estas contagens detectam se uma categoria ficou incompleta.
 const quantidades = { 'dia.': 31, 'geral.': 11, 'destino.': 11, 'aptidao.': 9, 'falta.': 9, 'pinaculo.': 11 };
 for (const [prefixo, total] of Object.entries(quantidades)) {
   assert.equal(Object.keys(textos).filter((c) => c.startsWith(prefixo)).length, total, `Cobertura: ${prefixo}`);

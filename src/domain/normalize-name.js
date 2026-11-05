@@ -23,17 +23,21 @@ export function decomporNome(nome, { modo = 'convencao' } = {}) {
   const transformacoes = [];
   let atual = null;
 
+  // Fecha o grupo atual quando encontra espaço ou hífen; não cria palavras vazias.
   const fecharPalavra = () => {
     if (atual && atual.letras.length > 0) palavras.push(atual);
     atual = null;
   };
 
+  // Cada letra retém a grafia original e a versão A–Z usada nas contas.
+  // Assim a interface pode explicar, por exemplo, que Á foi calculado como A.
   for (const grafema of grafemas(texto)) {
     if (/^\s+$/u.test(grafema) || HIFENS.has(grafema)) {
       fecharPalavra();
       continue;
     }
     if (APOSTROFOS.has(grafema)) {
+      // Apóstrofo compõe a grafia da palavra, mas não ganha valor nem separa subtotais.
       if (atual) atual.original += grafema;
       continue;
     }
@@ -62,6 +66,7 @@ export function decomporNome(nome, { modo = 'convencao' } = {}) {
   };
 }
 
+/** Converte os problemas encontrados na decomposição em mensagens legíveis para o formulário. */
 export function validarNome(nome, opcoes) {
   const decomposto = decomporNome(nome, opcoes);
   const erros = [];

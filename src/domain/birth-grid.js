@@ -23,6 +23,7 @@ export function digitosDaData({ dia, mes, ano }) {
   return `${dia}${mes}${ano}`.split('').map(Number).filter((d) => d !== 0);
 }
 
+/** Conta os algarismos e monta células e linhas completas a partir do mesmo conjunto de dados. */
 export function calcularQuadro(data) {
   const digitos = digitosDaData(data);
   const contagem = Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => [n, 0]));
@@ -37,9 +38,11 @@ export function calcularQuadro(data) {
     presentes,
     ausentes: numeros.filter((n) => contagem[n] === 0),
     repetidos: numeros.filter((n) => contagem[n] > 1),
+    // O layout define a posição; a contagem informa presença e repetições de cada célula.
     celulas: LAYOUT_QUADRO.map((linha) =>
       linha.map((numero) => ({ numero, vezes: contagem[numero] })),
     ),
+    // Uma linha só fica completa quando TODOS os seus números aparecem ao menos uma vez.
     linhasCompletas: LINHAS_INTERPRETADAS.filter((l) =>
       l.numeros.every((n) => contagem[n] > 0),
     ),

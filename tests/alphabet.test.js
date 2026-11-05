@@ -1,3 +1,7 @@
+/**
+ * Testes unitários da tabela de letras: conferem a conversão de A–Z, vogais e símbolos
+ * recusados. expect compara a saída real com um valor esperado conhecido.
+ */
 import { describe, expect, it } from 'vitest';
 import { TABELA_LETRAS, valorLetra } from '../src/domain/alphabet.js';
 

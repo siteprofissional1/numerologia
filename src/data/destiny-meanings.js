@@ -1,3 +1,7 @@
+/**
+ * Leituras específicas do Caminho do Destino, separadas dos significados gerais.
+ * A função d padroniza os metadados; a chave destino.N encontra a transcrição literal.
+ */
 import { registro } from './provenance.js';
 
 const d = (numero, tema, paginaInicial, paginaFinal, interpretacao, observacaoEditorial = null) =>

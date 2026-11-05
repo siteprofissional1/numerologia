@@ -1,3 +1,7 @@
+/**
+ * Testes das faixas de idade: verificam começos, términos inclusivos e fases abertas.
+ * As idades nas transições são importantes para detectar lacunas ou sobreposição de períodos.
+ */
 import { describe, expect, it } from 'vitest';
 import { gerarMapa } from '../src/domain/numerology-map.js';
 import { calcularIdadeEncerramento, dataNaIdade } from '../src/domain/pinnacles.js';

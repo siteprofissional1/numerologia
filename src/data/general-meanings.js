@@ -1,3 +1,8 @@
+/**
+ * Significados por número, afinidades e recortes sobre períodos futuros.
+ * As afinidades são consultadas pelo domínio; as interpretações da tela vêm da transcrição
+ * identificada por chave. Uma mesma posição pode mostrar o dígito e seu mestre intermediário.
+ */
 import { registro } from './provenance.js';
 
 /** Listas de "Afinidades" exatamente como aparecem em cada número (cap. 1). */

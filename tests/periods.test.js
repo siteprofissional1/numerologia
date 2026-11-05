@@ -1,3 +1,7 @@
+/**
+ * Testes de Ano e Mês Pessoal: verificam os valores e o caminho da soma,
+ * incluindo casos em que um mestre intermediário aparece apenas em uma das formas de somar.
+ */
 import { describe, expect, it } from 'vitest';
 import { calcularAnoUniversal, calcularMesPessoal } from '../src/domain/personal-periods.js';
 import { gerarMapa } from '../src/domain/numerology-map.js';

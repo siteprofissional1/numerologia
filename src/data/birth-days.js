@@ -1,3 +1,7 @@
+/**
+ * Catálogo dos 31 dias: cada número aponta para seu título e para a chave dia.N.
+ * A leitura usa o dia original, enquanto a redução numérica fica no domínio.
+ */
 import { registro } from './provenance.js';
 
 const dia = (numero, paginaInicial, paginaFinal, interpretacao, observacaoEditorial = null) =>

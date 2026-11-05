@@ -1,3 +1,8 @@
+/**
+ * Cálculos derivados do nome. analisarNome converte a entrada em palavras e letras
+ * classificadas; as demais funções trabalham sobre essa estrutura já validada.
+ * A interface recebe tanto o resultado quanto as etapas usadas para chegar a ele.
+ */
 import { ehVogalBase, valorLetra } from './alphabet.js';
 import { validarNome } from './normalize-name.js';
 import { exibicao, reduzirComMestres, reduzirSimples, somar, textoCaminho } from './reduce.js';
@@ -13,6 +18,7 @@ export function analisarNome(nome, opcoes = {}) {
   const { decomposto } = validacao;
   const todas = decomposto.palavras.flatMap((p) => p.letras);
   const temVogalBase = todas.some((l) => ehVogalBase(l.normalizada));
+  // A regra de Y olha o nome inteiro, não apenas a palavra que contém essa letra.
   const yEhVogal = !temVogalBase && todas.some((l) => l.normalizada === 'Y');
 
   const palavras = decomposto.palavras.map((palavra) => ({
@@ -40,6 +46,8 @@ export function analisarNome(nome, opcoes = {}) {
 
 /** Subtotais por palavra: 23 → 5 e 28 → 10 → 1, mas 11 e 22 ficam (Jones = 11, p. 46). */
 function subtotaisPorTipo(analise, tipo) {
+  // Filtra vogais ou consoantes dentro de cada palavra antes de somar os subtotais.
+  // Reduzir tudo de uma vez preservaria o dígito final, mas poderia perder um 22/4.
   return analise.palavras
     .map((palavra) => {
       const letras = palavra.letras.filter((l) => l.tipo === tipo);
@@ -54,9 +62,11 @@ function subtotaisPorTipo(analise, tipo) {
     .filter((p) => p.letras.length > 0);
 }
 
+/** Rotina compartilhada por Ambição e Personalidade; meta fornece seus nomes e fórmulas. */
 function calcularPosicaoDoNome(analise, tipo, meta) {
   const subtotais = subtotaisPorTipo(analise, tipo);
   if (subtotais.length === 0) {
+    // Ausência de um tipo de letra não é tratada como número zero interpretável.
     return {
       ...meta,
       indeterminado: true,
@@ -69,6 +79,7 @@ function calcularPosicaoDoNome(analise, tipo, meta) {
   }
   const somaSubtotais = somar(subtotais.map((p) => p.reducao.valor));
   const reducao = reduzirSimples(somaSubtotais);
+  // A soma bruta é uma conferência; o resultado principal segue o caminho por palavra.
   const bruto = somar(subtotais.map((p) => p.soma));
   const reducaoBruta = reduzirSimples(bruto);
   return {
@@ -94,6 +105,7 @@ function calcularPosicaoDoNome(analise, tipo, meta) {
   };
 }
 
+/** Soma somente as vogais, reaproveitando a rotina de subtotais por palavra. */
 export function calcularAmbicao(analise) {
   return calcularPosicaoDoNome(analise, 'vogal', {
     chave: 'ambicao',
@@ -107,6 +119,7 @@ export function calcularAmbicao(analise) {
   });
 }
 
+/** Soma somente as consoantes; a estrutura de retorno é a mesma da Ambição. */
 export function calcularPersonalidade(analise) {
   return calcularPosicaoDoNome(analise, 'consoante', {
     chave: 'personalidade',
@@ -120,6 +133,7 @@ export function calcularPersonalidade(analise) {
   });
 }
 
+/** Combina Ambição e Personalidade e confere o dígito pela soma de todas as letras. */
 export function calcularExpressao(analise, ambicao, personalidade) {
   const bruto = somar(analise.palavras.flatMap((p) => p.letras.map((l) => l.valor)));
   const controle = reduzirSimples(bruto);
@@ -133,6 +147,7 @@ export function calcularExpressao(analise, ambicao, personalidade) {
   };
 
   if (ambicao.indeterminado || personalidade.indeterminado) {
+    // Mesmo sem uma das posições, todas as letras têm valores e permitem esta soma.
     return {
       ...meta,
       indeterminado: false,
@@ -198,6 +213,7 @@ export function calcularRealidade(expressao, destino) {
 
 /** Quantas vezes cada número de 1 a 9 aparece nas letras (p. 19–22). */
 export function calcularFrequencias(analise) {
+  // Inclui todos os números de 1 a 9 desde o início, para registrar também as ausências.
   const contagem = Object.fromEntries([1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => [n, 0]));
   for (const palavra of analise.palavras) {
     for (const letra of palavra.letras) contagem[letra.valor] += 1;
@@ -219,6 +235,7 @@ export function calcularFrequencias(analise) {
  * David Weir: faltam 2, 3, 6, 7, 8; as posições são 6, 8, 5; restam 2, 3 e 7.
  */
 export function calcularSuprimentos(frequencias, posicoes) {
+  // Considera o valor principal e sua leitura reduzida ao procurar uma posição equivalente.
   return frequencias.ausentes.map((numero) => {
     const supridoPor = posicoes
       .filter((p) => p.valor !== null && (p.valor === numero || p.reduzido === numero))
@@ -238,6 +255,7 @@ export const GRUPOS_PLANOS = Object.freeze({
 export function calcularPlanos(frequencias) {
   const planos = {};
   for (const [plano, numeros] of Object.entries(GRUPOS_PLANOS)) {
+    // Ex.: duas letras de valor 4 e três de valor 5 formam cinco letras no plano material.
     planos[plano] = somar(numeros.map((n) => frequencias.contagem[n]));
   }
   const maior = Math.max(...Object.values(planos));
@@ -249,6 +267,7 @@ export function calcularPlanos(frequencias) {
 
 /** Pares e ímpares no nome e na data (p. 70), sem concluir a predominância "geral". */
 export function calcularParidade(frequencias, digitosData) {
+  // No nome, cada repetição conta uma vez; na data, usa os algarismos originais sem zeros.
   let pares = 0;
   let impares = 0;
   for (const [numero, vezes] of Object.entries(frequencias.contagem)) {

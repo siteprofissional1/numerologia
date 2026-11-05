@@ -1,3 +1,7 @@
+/**
+ * Duas tabelas independentes: aptidao.N descreve presença; falta.N descreve ausência.
+ * As fábricas a e f mantêm os registros no mesmo formato aceito por blocoTexto.
+ */
 import { registro } from './provenance.js';
 
 const a = (numero, pagina, interpretacao) =>

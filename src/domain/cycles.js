@@ -6,12 +6,14 @@ import { dataNaIdade, textoFaixa } from './pinnacles.js';
  */
 export function calcularCiclos(componentes, pinaculos, data) {
   const [p1, , , p4] = pinaculos.itens;
+  // Conta nove idades inclusivas: se o quarto pináculo começa aos 50, o ciclo vai até 58.
   const fimSegundo = p4.inicio + 8;
   const faixas = [
     { inicio: 0, fim: p1.fim },
     { inicio: p1.fim + 1, fim: fimSegundo },
     { inicio: fimSegundo + 1, fim: null },
   ];
+  // A ordem dos componentes é mês → dia → ano, diferente da ordem escrita de uma data.
   const origem = [
     ['Número do mês', componentes.mes],
     ['Número do dia', componentes.dia],

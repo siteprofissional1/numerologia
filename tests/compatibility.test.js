@@ -1,3 +1,7 @@
+/**
+ * Testes de comparação de mapas: conferem somas, grupos e alternativas ambíguas.
+ * São verificações das regras simbólicas, sem gerar percentuais de compatibilidade.
+ */
 import { describe, expect, it } from 'vitest';
 import { classificarPar, combinarNumeros, compararMapas } from '../src/domain/compatibility.js';
 import { gerarMapa } from '../src/domain/numerology-map.js';

@@ -1,3 +1,9 @@
+/**
+ * Ponto de entrada do navegador: conecta os formulários, os cálculos e as telas.
+ * Para acompanhar o fluxo principal, leia: acoes.gerar → recalcular → gerarMapa
+ * (em domain/numerology-map.js) → ir('mapa') → renderizar → secaoRelatorio.
+ * Os cálculos ficam no domínio; este arquivo cuida do estado e dos eventos.
+ */
 import './styles/tokens.css';
 import './styles/layout.css';
 import './styles/components.css';
@@ -18,6 +24,8 @@ import {
   secaoPinaculos, secaoPlanos, secaoQuadro,
 } from './ui/render.js';
 
+// Cada item liga um endereço como #/nome à função que constrói essa tela.
+// exigeMapa impede abrir resultados antes de haver uma entrada válida calculada.
 const SECOES = [
   ['Início', [
     { id: 'inicio', rotulo: 'Novo mapa', render: secaoInicio },
@@ -50,8 +58,10 @@ const SECOES = [
   ]],
 ];
 
+// O menu usa os grupos; a busca pela rota usa a mesma lista sem agrupamento.
 const TODAS = SECOES.flatMap(([, itens]) => itens);
 
+/** Se o navegador bloquear localStorage, oferece armazenamento temporário em memória. */
 function storageSeguro() {
   try {
     return window.localStorage;
@@ -73,6 +83,9 @@ const CHAVE_TEMA = 'numerologia-codex.tema';
 const novoOraculo = () => ({ categoria: 'amor', numeros: [null, null, null], erros: [], resultado: null });
 const formularioVazio = () => ({ nome: '', data: '' });
 
+// O formulário guarda a digitação. entrada guarda a última entrada confirmada.
+// mapa contém os resultados dessa entrada, e textos contém as interpretações.
+// Oráculo e comparação têm estados próprios, pois também funcionam sem mapa aberto.
 const estado = {
   formulario: formularioVazio(),
   errosFormulario: [],
@@ -88,6 +101,7 @@ const estado = {
   perfilId: null,
 };
 
+/** Atualiza o mapa confirmado e transforma erros de validação em mensagens da interface. */
 function recalcular() {
   const { nome, data } = estado.entrada;
   const mapa = gerarMapa({ nome, data, anoConsulta: estado.anoConsulta });
@@ -100,15 +114,20 @@ function recalcular() {
   return true;
 }
 
+// Alterar o fragmento da URL dispara hashchange, sem solicitar outra página ao servidor.
+// Quando a rota já é a mesma, redesenhamos explicitamente para exibir os dados novos.
 const ir = (id) => {
   if (window.location.hash === `#/${id}`) renderizar();
   else window.location.hash = `#/${id}`;
 };
 
+// As telas recebem estas funções em ctx.acoes e as chamam nos eventos dos controles.
+// Isso concentra as alterações de estado aqui, em vez de espalhá-las pelos componentes.
 const acoes = {
   ir,
   atualizar: () => renderizar(false),
   gerar() {
+    // A cópia separa os dados confirmados das próximas edições do formulário.
     estado.entrada = { ...estado.formulario };
     if (recalcular()) {
       ir('mapa');
@@ -134,6 +153,7 @@ const acoes = {
       renderizar(false);
       return;
     }
+    // O ano muda as leituras de períodos e a fase destacada; nome e nascimento persistem.
     estado.anoConsulta = ano;
     if (estado.entrada) recalcular();
     renderizar(false);
@@ -159,6 +179,7 @@ const acoes = {
     renderizar(false);
   },
   salvarPerfil() {
+    // Com id, o repositório atualiza o perfil; sem id, cria um novo registro.
     const perfil = estado.repositorio.salvar({ id: estado.perfilId ?? undefined, ...estado.entrada });
     estado.perfilId = perfil.id;
     notificar('Perfil salvo neste navegador.');
@@ -189,13 +210,16 @@ const acoes = {
   },
 };
 
+// Contrato compartilhado com a interface: dados em estado e comandos em acoes.
 const ctx = { estado, acoes };
 
+/** Resolve o fragmento #/secao; uma rota desconhecida volta ao primeiro formulário. */
 function secaoAtual() {
   const id = window.location.hash.replace(/^#\/?/, '');
   return TODAS.find((s) => s.id === id) ?? TODAS[0];
 }
 
+/** Reconstrói o menu e marca a seção atual para navegação visual e leitores de tela. */
 function renderizarNavegacao(atual) {
   const nav = document.getElementById('navegacao');
   limpar(nav);
@@ -217,6 +241,10 @@ function renderizarNavegacao(atual) {
 
 const FOCAVEIS = 'a[href], button, input, select, summary';
 
+/**
+ * Substitui o conteúdo pela seção escolhida. mover=true serve para trocar de tela;
+ * mover=false mantém a posição e o foco ao atualizar um ano, mês ou formulário.
+ */
 function renderizar(mover = true) {
   const atual = secaoAtual();
   const conteudo = document.getElementById('conteudo');
@@ -224,6 +252,7 @@ function renderizar(mover = true) {
   const indiceFoco = [...conteudo.querySelectorAll(FOCAVEIS)].indexOf(document.activeElement);
   renderizarNavegacao(atual);
   limpar(conteudo);
+  // A URL pode ser digitada diretamente: a proteção não depende de clicar no menu.
   if (atual.exigeMapa && !estado.mapa) {
     conteudo.append(secao(atual.rotulo, 'Esta seção mostra os resultados de um mapa. Gere um mapa para continuar.',
       h('a', { class: 'botao', href: '#/inicio' }, 'Ir para o formulário')));
@@ -242,6 +271,7 @@ function renderizar(mover = true) {
   }
 }
 
+/** O atributo data-theme seleciona as variáveis de cores definidas em tokens.css. */
 function aplicarTema(tema) {
   const escuro = tema === 'dark';
   document.documentElement.dataset.theme = escuro ? 'dark' : 'light';
@@ -250,6 +280,7 @@ function aplicarTema(tema) {
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', escuro ? '#000000' : '#ffffff');
 }
 
+/** Aplica a preferência imediatamente e tenta guardá-la para a próxima abertura. */
 function escolherTema(tema) {
   aplicarTema(tema);
   try {
@@ -257,6 +288,7 @@ function escolherTema(tema) {
   } catch { /* a preferência é opcional */ }
 }
 
+/** Registra os eventos uma vez, carrega o conteúdo e desenha a primeira tela. */
 function iniciar() {
   try {
     aplicarTema(storage.getItem(CHAVE_TEMA));
@@ -271,6 +303,7 @@ function iniciar() {
     e.currentTarget.setAttribute('aria-expanded', String(aberta));
   });
 
+  // As interpretações precisam existir antes de qualquer seção tentar mostrá-las.
   estado.textos = carregarTextosPrivados();
   window.addEventListener('hashchange', () => renderizar());
   renderizar(false);

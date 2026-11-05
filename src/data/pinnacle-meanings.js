@@ -1,3 +1,7 @@
+/**
+ * Descritores de pináculos, explicações dos períodos e exemplos específicos.
+ * As faixas de idade são calculadas em domain; este catálogo somente seleciona conteúdo.
+ */
 import { registro } from './provenance.js';
 
 const p = (numero, paginaInicial, interpretacao) =>

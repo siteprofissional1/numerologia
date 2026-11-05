@@ -1,3 +1,8 @@
+/**
+ * Monta o relatório completo reaproveitando componentes das telas individuais.
+ * A impressão usa window.print e print.css, portanto o PDF mantém o mesmo conteúdo
+ * exibido pelo navegador sem precisar de um servidor ou biblioteca de exportação.
+ */
 import { DIAS_NASCIMENTO } from '../data/birth-days.js';
 import { ELEMENTOS_TEXTO } from '../data/elements.js';
 import { FUTURO_POR_NUMERO } from '../data/general-meanings.js';
@@ -21,11 +26,13 @@ export function secaoRelatorio(ctx) {
   const f = m.frequencias;
   // A numeração acompanha a ordem das seções.
   let numero = 0;
+  // Cada chamada cria uma seção numerada; não é necessário manter números escritos à mão.
   const parte = (titulo, ...filhos) => {
     numero += 1;
     return h('section', { class: 'secao-relatorio bloco' }, h('h3', {}, `${numero}. ${titulo}`), filhos);
   };
 
+  // A ordem abaixo também define a ordem de leitura e impressão do mapa completo.
   return secao('Mapa completo', null,
     cabecalhoMapa(ctx, h('div', { class: 'acoes sem-impressao' },
       h('button', { type: 'button', class: 'botao', onClick: () => window.print() }, 'Imprimir / Salvar como PDF'))),
@@ -127,6 +134,7 @@ const LISTA = new Intl.ListFormat('pt-BR', { style: 'long', type: 'conjunction' 
 function gruposDeMeses(meses) {
   const grupos = new Map();
   const incluir = (numero, nome) => grupos.set(numero, [...(grupos.get(numero) ?? []), nome.toLowerCase()]);
+  // Um mês com registro 11/2 ou 22/4 participa das leituras do dígito e do mestre.
   for (const mes of meses) {
     incluir(mes.valor, mes.nomeMes);
     if (mes.mestre) incluir(mes.mestre, mes.nomeMes);

@@ -13,6 +13,7 @@ export const OPCOES_ORACULO = Object.freeze([1, 2, 3, 4, 5, 6, 7, 8, 9, 11, 22])
  * só não se reduz quando a soma chega a 11 ou 22.
  */
 export function consultarOraculo(categoria, numeros) {
+  // Valida também no domínio: uma chamada direta não pode depender da proteção dos selects.
   if (!Object.hasOwn(CATEGORIAS_ORACULO, categoria)) {
     throw new RangeError(`Categoria inválida: ${categoria}`);
   }
@@ -25,6 +26,7 @@ export function consultarOraculo(categoria, numeros) {
   const reducao = reduzirComMestres(numeros[0] + numeros[1] + numeros[2]);
   return {
     categoria,
+    // Copia a lista para uma edição posterior do formulário não alterar a consulta pronta.
     numeros: [...numeros],
     reducao,
     valor: reducao.valor,

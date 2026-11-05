@@ -6,6 +6,8 @@ import { INCONSISTENCIAS } from '../src/data/inconsistencies.js';
 
 const AVISO = '> Arquivo gerado por `npm run gerar-docs` a partir de `src/data/`. Não edite à mão.\n';
 
+// Cada registro é convertido em uma seção Markdown. Alterar o catálogo e gerar de novo
+// mantém a explicação no aplicativo e a documentação interna usando a mesma informação.
 const regras = [
   '# Regras com fontes\n',
   AVISO,
@@ -37,6 +39,7 @@ const inconsistencias = [
 `),
 ].join('\n');
 
+// Resolver caminhos pelo próprio módulo permite chamar o script a partir de outra pasta.
 writeFileSync(new URL('../docs/REGRAS_COM_FONTES.md', import.meta.url), regras);
 writeFileSync(new URL('../docs/INCONSISTENCIAS_DO_LIVRO.md', import.meta.url), inconsistencias);
 console.log(`${REGRAS.length} regras e ${INCONSISTENCIAS.length} inconsistências documentadas.`);

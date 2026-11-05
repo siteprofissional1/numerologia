@@ -1,3 +1,4 @@
+/** Compara dois mapas já calculados; não precisa ler formulários nem executar acesso à rede. */
 import { AFINIDADES } from '../data/general-meanings.js';
 import { ELEMENTOS, elementoDoNumero } from './birth-numbers.js';
 import { exibicao, reduzirComMestres, textoCaminho } from './reduce.js';
@@ -43,6 +44,8 @@ export function classificarPar(a, b) {
       classe: classificarUmaVez(a, b, { tabela68: true }),
     });
   }
+  // Leituras diferentes podem chegar à mesma classe. Set remove as repetições antes
+  // de decidir se existe ambiguidade de fato, em vez de contar apenas as alternativas.
   const classes = [...new Set(candidatas.map((c) => c.classe))];
   const ambiguo = classes.length > 1;
   return {
@@ -69,12 +72,14 @@ export function combinarNumeros(a, b) {
   };
 }
 
+/** Confere os dois sentidos: a lista de A incluir B não garante que a de B inclua A. */
 function afinidadeEntre(a, b) {
   const lista = (n) => AFINIDADES[n] ?? [];
   const inclui = (de, para) => lista(de) === 'todos' || lista(de).includes(para);
   return { aListaB: inclui(a, b), bListaA: inclui(b, a) };
 }
 
+/** Normaliza uma posição dos dois mapas para a tabela; null preserva resultados indeterminados. */
 function linhaPosicao(rotulo, posA, posB, paginas, { classificar = false } = {}) {
   const a = posA.indeterminado ? null : posA.valor;
   const b = posB.indeterminado ? null : posB.valor;

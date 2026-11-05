@@ -39,6 +39,8 @@ export const OPCOES_REGRAS = Object.freeze({
   },
 });
 
+// Estes valores determinam o comportamento normal. As funções do domínio também
+// aceitam alternativas explícitas, usadas para explicar ambiguidades e nos testes.
 export const REGRAS_PADRAO = Object.freeze({
   normalizacao: 'convencao',
   componentesMestres: 'reduzir',
@@ -46,6 +48,7 @@ export const REGRAS_PADRAO = Object.freeze({
   idadeDestinoMestre: 'literal',
 });
 
+/** Cria uma cópia dos padrões e aplica apenas opções conhecidas, sem modificar o catálogo. */
 export function resolverRegras(parciais = {}) {
   const regras = { ...REGRAS_PADRAO };
   for (const [chave, valor] of Object.entries(parciais ?? {})) {

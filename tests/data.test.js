@@ -1,3 +1,7 @@
+/**
+ * Testes dos catálogos e da importação: conferem chaves, cobertura e fidelidade das passagens.
+ * Quando o PDF está disponível, a comparação verifica também as palavras da fonte original.
+ */
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import { CORRECAO_DIA_18, DIAS_NASCIMENTO } from '../src/data/birth-days.js';
