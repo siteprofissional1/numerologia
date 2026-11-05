@@ -62,6 +62,14 @@ Os detalhes das escolhas para as ambiguidades do livro estão em [docs/DECISOES_
 
 ## GitHub Pages
 
+Para publicar pelo terminal já autenticado do Linux Mint, execute:
+
+```bash
+bash ~/Documentos/numerologia/numerologia-codex/scripts/publicar-github.sh
+```
+
+O comando verifica a conta e o repositório, executa os testes, envia `main`, configura o Pages, acompanha a publicação e mostra o endereço depois de confirmar que o site responde. Ele interrompe a publicação se algum teste falhar.
+
 O repositório de destino é [siteprofissional1/numerologia](https://github.com/siteprofissional1/numerologia). O workflow `.github/workflows/pages.yml` executa os testes, gera o site e publica o artefato no GitHub Pages a cada envio para `main`. A origem de publicação nas configurações de Pages deve ser **GitHub Actions**.
 
 O arquivo `index.html` da raiz também pode ser aberto diretamente, independentemente da hospedagem.
